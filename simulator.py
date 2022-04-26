@@ -122,6 +122,9 @@ if __name__ == "__main__":
 
 # Home court advantage ~ check actual lines to see how hca effects
 # Web interface
+    # Team Selector ~ NBA logo API gets team logo
+    # Animations? Report score, spread, o/u
+    # Scrape Vegas Lines - show ours vs Vegas & suggest bets
 # Presentation
     # Interactive demo - people pull up on phone, get line for a playoff game
     #                    and wager
