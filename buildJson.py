@@ -38,7 +38,7 @@ def get_team_probabilities(teamParse):
         ft_miss_total += teamParse["FTA"][game_num] - teamParse["FTM"][game_num]
         
     # Compute the number of shooting fouls based on FTA
-    # NBA research shows 44% of free throws attempted equals half the number of fouls 
+    # NBA research shows 44% of free throws attempted complete a possession
     shooting_fouls_total = fta_total * 0.44
     # Get total number of possessions for the team in the entire season
     possession_total = two_make_total + two_miss_total + three_make_total + three_miss_total + turnover_total + shooting_fouls_total
