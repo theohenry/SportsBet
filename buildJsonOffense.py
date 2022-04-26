@@ -65,6 +65,8 @@ def build_json():
     xls = "GameData.xlsx"
     f = pd.ExcelFile(xls)
     sheet_names = f.sheet_names
+    print(sheet_names)
+    exit()
     nba_dict = {}
 
     # Loop for every team

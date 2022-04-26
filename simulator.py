@@ -83,29 +83,49 @@ def sim_game(off_prob1, def_prob1, off_prob2, def_prob2):
 
 # Given two teams, simulates a game 10,000 times. Returns an array with final
 # score team1, team2, and spread.
-def sim_montecarlo(off_prob_dict, def_prob_dict, team1, team2, num_simulations):
+def sim_montecarlo(off_prob_dict, def_prob_dict, away_team, home_team, num_simulations):
     score1 = 0
     score2 = 0
     for i in range(num_simulations):
-        s1, s2 = sim_game(off_prob_dict[team1], def_prob_dict[team1],off_prob_dict[team2], def_prob_dict[team2])
+        s1, s2 = sim_game(off_prob_dict[away_team], def_prob_dict[away_team],off_prob_dict[home_team], def_prob_dict[home_team])
         score1 += s1
         score2 += s2
 
+
     avg_score1 = round(score1 / num_simulations)
     avg_score2 = round(score2 / num_simulations)
-    print("Final: ", team1, avg_score1, " - ", team2, avg_score2)
+
+    if (avg_score1 == avg_score2):
+        if (score1 > score2):
+            avg_score1 += 1
+        elif (score2 > score1):
+            avg_score2 += 1
+
+    # print("Final: ", team1, avg_score1, " - ", team2, avg_score2)
+    return avg_score1, avg_score2
 
 
 
 
 
-if __name__ == "__main__":
-    team1 = input("Enter team 1: ").upper()
-    team2 = input("Enter team 2: ").upper()
+# if __name__ == "__main__":
+#     team1 = input("Enter team 1: ").upper()
+#     team2 = input("Enter team 2: ").upper()
     # team1 = "PHX"
     # team2 = "PHI"
     # print("{} beat {}".format(team1, team2))
     # print(team1, "beats", team2)
+    # off_prob_dict = {}
+    # def_prob_dict = {}
+    # with open('offense_probability.json') as json_file:
+    #     off_prob_dict = json.load(json_file)
+    # with open('defense_probability.json') as json_file:
+    #     def_prob_dict = json.load(json_file)
+
+    # num_simulations = 1000
+    # sim_montecarlo(off_prob_dict, def_prob_dict, team1, team2, num_simulations)
+
+def simulate(away_team, home_team):
     off_prob_dict = {}
     def_prob_dict = {}
     with open('offense_probability.json') as json_file:
@@ -114,18 +134,18 @@ if __name__ == "__main__":
         def_prob_dict = json.load(json_file)
 
     num_simulations = 1000
-    sim_montecarlo(off_prob_dict, def_prob_dict, team1, team2, num_simulations)
-
+    return sim_montecarlo(off_prob_dict, def_prob_dict, away_team, home_team, num_simulations)
 
 
 # Next Steps
 
 # Home court advantage ~ check actual lines to see how hca effects
-# Web interface
+# Web interface ~ streamlit.io
     # Team Selector ~ NBA logo API gets team logo
     # Animations? Report score, spread, o/u
     # Scrape Vegas Lines - show ours vs Vegas & suggest bets
 # Presentation
+    # Canva!!
     # Interactive demo - people pull up on phone, get line for a playoff game
     #                    and wager
     #                    Show on board vegas lines on left, Ours on right
@@ -135,6 +155,12 @@ if __name__ == "__main__":
     # Report how we would perform betting spread, o/u, moneyline w $10
     #                    CHART HERE, an animated dot
     # How does our program work
+    # Actionability!!
     # Shortcomings / what to do better
+        # Injuries / lineup changes
+        # Game state - probability of an event given a previous event
+            # end of game situations, time and score
+
 # README
 # Script that calls the api every night to update the excel and json
+
