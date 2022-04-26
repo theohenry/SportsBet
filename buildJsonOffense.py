@@ -1,8 +1,8 @@
 # buildJson.py
 # Theo Henry, Kunal Valia, Gustavo Curioso
 # April 2022
-# Read from a spreadsheet of team data and output a JSON file containing 
-# each teams probabilities of an event occuring in an offensive possesion 
+# Read from a spreadsheet of team data and output a JSON file containing
+# each teams probabilities of an event occuring in an offensive possesion
 
 import json
 import pandas as pd
@@ -36,7 +36,7 @@ def get_team_probabilities(teamParse):
         fta_total += teamParse["FTA"][game_num]
         ft_made_total += teamParse["FTM"][game_num]
         ft_miss_total += teamParse["FTA"][game_num] - teamParse["FTM"][game_num]
-        
+
     # Compute the number of shooting fouls based on FTA
     # NBA research shows 44% of free throws attempted complete a possession
     shooting_fouls_total = fta_total * 0.44
@@ -59,7 +59,7 @@ def get_team_probabilities(teamParse):
 
     return teamDict
 
-# Read from an existing spreadsheet of team data and build a json file to 
+# Read from an existing spreadsheet of team data and build a json file to
 # output every teams probabilities
 def build_json():
     xls = "GameData.xlsx"
@@ -76,7 +76,7 @@ def build_json():
         nba_dict[team_name] = get_team_probabilities(teamParse)
 
     # Write data to the json file probability.json
-    with open('probability.json', 'w') as f:
+    with open('offense_probability.json', 'w') as f:
         json.dump(nba_dict, f, indent=2)
 
 build_json()

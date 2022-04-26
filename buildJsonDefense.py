@@ -1,70 +1,59 @@
 # buildJson.py
 # Theo Henry, Kunal Valia, Gustavo Curioso
 # April 2022
-# Read from a spreadsheet of team data and output a JSON file containing 
-# each teams probabilities of an event occuring in a defensive possesion 
+# Read from a spreadsheet of team data and output a JSON file containing
+# each teams probabilities of an event occuring in a defensive possesion
 
 import json
 import pandas as pd
 
+def initialize_nba(team_names):
+    nba_dict = {}
+    for team in team_names:
+        teamDict = {}
+        teamDict['2MAKE'] = 0
+        teamDict['2MISS'] = 0
+        teamDict['3MAKE'] = 0
+        teamDict['3MISS'] = 0
+        teamDict['TO'] = 0
+        teamDict['OREB'] = 0
+        teamDict['S_FOULS'] = 0
+        teamDict['POSS'] = 0
+        nba_dict[team] = teamDict
+    return nba_dict
+
 # Given a dictionary of season data, calculate and return a dictionary
 # containing the probabilities of each outcome on any given possession
 # These are defensive statistics, so each stat is how many a given team concedes
-def get_team_probabilities(teamParse):
-    two_make_total = 0
-    two_miss_total = 0
-    three_make_total = 0
-    three_miss_total = 0
-    turnover_total = 0
-    fta_total = 0
-    oreb_total = 0
-    dreb_total = 0
-    rebound_total = 0
-    games_total = 0
+def update_team_values(teamParse, nba_dict):
 
-    # Loop through each game in a season. Get totals for each stat
+    # Loop through each game in a season. Get totals for each stat and append to appropriate dict entry
     for game_num in teamParse['GAME_ID'].keys():
-        game_misses = teamParse["FG2A"][game_num] - teamParse["FG2M"][game_num] + teamParse["FG3A"][game_num] - teamParse["FG3M"][game_num]
-        two_make_total += teamParse["FG2M"][game_num]
-        two_miss_total += teamParse["FG2A"][game_num] - teamParse["FG2M"][game_num]
-        three_make_total += teamParse["FG3M"][game_num]
-        three_miss_total += teamParse["FG3A"][game_num] - teamParse["FG3M"][game_num]
-        turnover_total += teamParse["TOV"][game_num]
-        oreb_total += teamParse["OREB"][game_num]
-        dreb_total += game_misses - teamParse["OREB"][game_num]
-        fta_total += teamParse["FTA"][game_num]
-        ft_made_total += teamParse["FTM"][game_num]
-        ft_miss_total += teamParse["FTA"][game_num] - teamParse["FTM"][game_num]
-        
-    # Compute the number of shooting fouls based on FTA
-    # NBA research shows 44% of free throws attempted complete a possession
-    shooting_fouls_total = fta_total * 0.44
-    # Get total number of possessions for the team in the entire season
-    possession_total = two_make_total + two_miss_total + three_make_total + three_miss_total + turnover_total + shooting_fouls_total
-    rebound_total = oreb_total + dreb_total
+        team_name = teamParse['MATCHUP'][game_num]
+        nba_dict[team_name]['2MAKE'] += teamParse["FG2M"][game_num]
+        nba_dict[team_name]['2MISS'] += teamParse["FG2A"][game_num] - teamParse["FG2M"][game_num]
+        nba_dict[team_name]['3MAKE'] += teamParse["FG3M"][game_num]
+        nba_dict[team_name]['3MISS'] += teamParse["FG3A"][game_num] - teamParse["FG3M"][game_num]
+        nba_dict[team_name]['TO'] += teamParse["TOV"][game_num]
+        nba_dict[team_name]['OREB'] += teamParse["OREB"][game_num]
+        nba_dict[team_name]['S_FOULS'] += teamParse["FTA"][game_num] * 0.44
+        nba_dict[team_name]['POSS'] += teamParse["FG2A"][game_num] + teamParse["FG3A"][game_num] + teamParse["TOV"][game_num] + (teamParse["FTA"][game_num] * 0.44)
 
-    teamDict = {}
-    teamDict['2MAKE'] = two_make_total / possession_total
-    teamDict['2MISS'] = two_miss_total / possession_total
-    teamDict['3MAKE'] = three_make_total / possession_total
-    teamDict['3MISS'] = three_miss_total / possession_total
-    teamDict['TO'] = turnover_total / possession_total
-    teamDict['FOUL'] = shooting_fouls_total / possession_total
-    teamDict['OREB'] = oreb_total / rebound_total
-    teamDict['DREB'] = dreb_total / rebound_total
-    teamDict['FTMA'] = ft_made_total / fta_total
-    teamDict['FTMI'] = ft_miss_total / fta_total
-    teamDict['POS_PG'] = round((possession_total - oreb_total) / len(teamParse['GAME_ID'].keys()))
+# Given a dictionary of defensive season totals, convert totals to probabilities
+def set_probabilities(nba_dict):
+    for team in nba_dict.keys():
+        for stat in nba_dict[team].keys():
+            if stat != 'POSS':
+                nba_dict[team][stat] /= nba_dict[team]['POSS']
 
-    return teamDict
 
-# Read from an existing spreadsheet of team data and build a json file to 
+# Read from an existing spreadsheet of team data and build a json file to
 # output every teams probabilities
 def build_json():
     xls = "GameData.xlsx"
     f = pd.ExcelFile(xls)
     sheet_names = f.sheet_names
-    nba_dict = {}
+    nba_dict = initialize_nba(sheet_names)
 
     # Loop for every team
     for i in range(len(sheet_names)):
@@ -72,10 +61,13 @@ def build_json():
         data = pd.read_excel(xls, sheet_names)
         teamJson = data[team_name].to_json()
         teamParse = json.loads(teamJson)
-        nba_dict[team_name] = get_team_probabilities(teamParse)
+        update_team_values(teamParse, nba_dict)
+
+
+    set_probabilities(nba_dict)
 
     # Write data to the json file probability.json
-    with open('probability.json', 'w') as f:
+    with open('defense_probability.json', 'w') as f:
         json.dump(nba_dict, f, indent=2)
 
 build_json()

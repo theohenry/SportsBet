@@ -11,13 +11,13 @@ from numpy import random as rnd
 
 # Takes in a dict of probabilities and returns an array of ranges
 # [2make, 3make, miss, TO, foul]
-def get_range(off_prob, def_prob):
+def get_range(probabilities):
     range = [0,0,0,0,0]
-    range[0] = (off_prob["2MAKE"] + def_prob["2MAKE"]) / 2
-    range[1] = ((off_prob["3MAKE"] + def_prob["3MAKE"]) / 2) + range[0]
-    range[2] = (((off_prob["2MISS"] + off_prob["3MISS"]) + (def_prob["2MISS"] + def_prob["3MISS"])) / 2) + range[1]
-    range[3] = ((off_prob["TO"] + def_prob["TO"]) / 2) + range[2]
-    range[4] = ((off_prob["FOUL"] + def_prob["S_FOULS"]) / 2) + range[3]
+    range[0] = probabilities["2MAKE"]
+    range[1] = probabilities["3MAKE"] + range[0]
+    range[2] = probabilities["2MISS"] + probabilities["3MISS"] + range[1]
+    range[3] = probabilities["TO"] + range[2]
+    range[4] = probabilities["FOUL"] + range[3]
     return range
 
 # Take a range of probabilities, oreb prob, ftmake prob, return an int for
@@ -61,20 +61,20 @@ def sim_possesion(range, p_oreb, p_ftmake):
 
 
 # Takes in two dicts of probabilities (one for each team) and simulates a game between the two
-def sim_game(off_prob1, def_prob1, off_prob2, def_prob2):
+def sim_game(probabilities1, probabilities2):
     # LETS TAKE A NORMAL DISTRIBUTION OF POSSESSIONS
-    avg_possessions = round((off_prob1["POS_PG"] + off_prob2["POS_PG"]) / 2)
+    avg_possessions = round((probabilities1["POS_PG"] + probabilities2["POS_PG"]) / 2)
     # Possessions vary: normalized distribution
     scaled_possessions = round(rnd.normal(loc=avg_possessions, scale=5))
     score1 = 0
     score2 = 0
     # print(score1, " - ", score2)
-    range1 = get_range(off_prob1, def_prob2)
-    range2 = get_range(off_prob2, def_prob1)
-    p_oreb1 = off_prob1["OREB"]
-    p_oreb2 = off_prob2["OREB"]
-    p_ftmake1 = off_prob1["FTMA"]
-    p_ftmake2 = off_prob2["FTMA"]
+    range1 = get_range(probabilities1)
+    range2 = get_range(probabilities2)
+    p_oreb1 = probabilities1["OREB"]
+    p_oreb2 = probabilities2["OREB"]
+    p_ftmake1 = probabilities1["FTMA"]
+    p_ftmake2 = probabilities2["FTMA"]
     for i in range(scaled_possessions):
         score1 += sim_possesion(range1, p_oreb1, p_ftmake1)
         score2 += sim_possesion(range2, p_oreb2, p_ftmake2)
@@ -83,11 +83,11 @@ def sim_game(off_prob1, def_prob1, off_prob2, def_prob2):
 
 # Given two teams, simulates a game 10,000 times. Returns an array with final
 # score team1, team2, and spread.
-def sim_montecarlo(off_prob_dict, def_prob_dict, team1, team2, num_simulations):
+def sim_montecarlo(prob_dict, team1, team2, num_simulations):
     score1 = 0
     score2 = 0
     for i in range(num_simulations):
-        s1, s2 = sim_game(off_prob_dict[team1], def_prob_dict[team1],off_prob_dict[team2], def_prob_dict[team2])
+        s1, s2 = sim_game(prob_dict[team1], prob_dict[team2])
         score1 += s1
         score2 += s2
 
@@ -100,38 +100,15 @@ def sim_montecarlo(off_prob_dict, def_prob_dict, team1, team2, num_simulations):
 
 
 if __name__ == "__main__":
-    team1 = input("Enter team 1: ").upper()
-    team2 = input("Enter team 2: ").upper()
-    # team1 = "PHX"
-    # team2 = "PHI"
+    # team1 = input("Enter team 1: ").upper()
+    # team2 = input("Enter team 2: ").upper()
+    team1 = "PHX"
+    team2 = "PHI"
     # print("{} beat {}".format(team1, team2))
     # print(team1, "beats", team2)
-    off_prob_dict = {}
-    def_prob_dict = {}
+    prob_dict = {}
     with open('offense_probability.json') as json_file:
-        off_prob_dict = json.load(json_file)
-    with open('defense_probability.json') as json_file:
-        def_prob_dict = json.load(json_file)
+        prob_dict = json.load(json_file)
 
     num_simulations = 1000
-    sim_montecarlo(off_prob_dict, def_prob_dict, team1, team2, num_simulations)
-
-
-
-# Next Steps
-
-# Home court advantage ~ check actual lines to see how hca effects
-# Web interface
-# Presentation
-    # Interactive demo - people pull up on phone, get line for a playoff game
-    #                    and wager
-    #                    Show on board vegas lines on left, Ours on right
-    #                    Have people choose how to bet
-    # CHARTS - HAVE PEOPLE VOTE WITH POLL ON PHONE, and DISPLAY
-    # How we compare to Vegas
-    # Report how we would perform betting spread, o/u, moneyline w $10
-    #                    CHART HERE, an animated dot
-    # How does our program work
-    # Shortcomings / what to do better
-# README
-# Script that calls the api every night to update the excel and json
+    sim_montecarlo(prob_dict, team1, team2, num_simulations)
