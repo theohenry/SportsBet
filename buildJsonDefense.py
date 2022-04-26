@@ -2,13 +2,14 @@
 # Theo Henry, Kunal Valia, Gustavo Curioso
 # April 2022
 # Read from a spreadsheet of team data and output a JSON file containing 
-# each teams probabilities of an event occuring in a possesion 
+# each teams probabilities of an event occuring in a defensive possesion 
 
 import json
 import pandas as pd
 
 # Given a dictionary of season data, calculate and return a dictionary
 # containing the probabilities of each outcome on any given possession
+# These are defensive statistics, so each stat is how many a given team concedes
 def get_team_probabilities(teamParse):
     two_make_total = 0
     two_miss_total = 0
@@ -16,12 +17,10 @@ def get_team_probabilities(teamParse):
     three_miss_total = 0
     turnover_total = 0
     fta_total = 0
-    possession_total = 0
     oreb_total = 0
     dreb_total = 0
     rebound_total = 0
-    ft_made_total = 0
-    ft_miss_total = 0
+    games_total = 0
 
     # Loop through each game in a season. Get totals for each stat
     for game_num in teamParse['GAME_ID'].keys():
