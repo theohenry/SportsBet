@@ -6,7 +6,6 @@ import json
 import requests
 import urllib.request
 
-# API_KEY = '3a42a480fdfad6e556bae2d546fc44de'
 API_KEY = st.secrets["NBA_API_KEY"]
 SPORT = 'basketball_nba'
 REGIONS = 'us'
@@ -14,7 +13,7 @@ MARKETS = 'spreads'
 ODDS_FORMAT = 'decimal'
 DATE_FORMAT = 'iso'
 
-st.title("Welcome to the NBA")
+st.title("Welcome to NBA Sport$ Betting")
 
 nba_team_dict = {}
 with open('teamNames.json') as json_file:
