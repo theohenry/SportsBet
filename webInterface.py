@@ -14,6 +14,12 @@ ODDS_FORMAT = 'decimal'
 DATE_FORMAT = 'iso'
 
 st.title("Welcome to NBA Sport$ Betting")
+st.write("Enter two teams to run in our simulation. In order to bet using our "+
+"model, follow these rules. If our predicted spread is closer to 0 than the " +
+"actual spread for that team, then we predict the opposing team will cover the spread."+
+" For example, our model predicts 76ers -3. The actual Vegas odds spread is 76ers -6.5. "+
+"According to our model, we say the 76ers will NOT cover and instead their"+
+" opponent will cover the spread.")
 
 nba_team_dict = {}
 with open('teamNames.json') as json_file:
@@ -31,13 +37,13 @@ with left_column:
     home_team = st.selectbox(
         'Select the home team:',
         df['team1'],
-        index = 1)
+        index = 0)
 
 with right_column:
     away_team = st.selectbox(
         'Select the away team:',
         df['team2'],
-        index = 0)
+        index = 1)
 
 h_team = nba_team_dict[home_team]
 a_team = nba_team_dict[away_team]
@@ -91,18 +97,6 @@ def getOdds():
             team1 = odds_json[i]['bookmakers'][0]['markets'][0]['outcomes'][0]['name']
             team2 = odds_json[i]['bookmakers'][0]['markets'][0]['outcomes'][1]['name']
             spread = odds_json[i]['bookmakers'][0]['markets'][0]['outcomes'][0]['point']
-            # with left_col:
-            #     if (spread < 0):
-            #         st.write(team1, "-", -1 * spread)
-            #     else:
-            #         st.write(team1, "+",spread)
-            # with middle_col:
-            #     st.write("vs")
-            # with right_col:
-            #     if (spread > 0):
-            #         st.write(team2,"-",spread)
-            #     else:
-            #         st.write(team2, "+", spread * -1)
             if (spread < 0):
                 st.write(team1, "-", -1 * spread, "vs", team2, "+", spread * -1)
             else:
@@ -129,15 +123,6 @@ def print_results(away_team, away_score, home_team, home_score):
     st.subheader("Over/Under")
     st.write("Over/Under", over_under)
 
-# col1, col2, col3 = st.columns(3)
-
-# with col1:
-#     pass
-# with col3:
-#     pass
-# with col2 :
-#     clicked = st.button("Run Simulation")
-
 
 clicked = st.button("Run Simulation")
 if (clicked):
@@ -158,7 +143,7 @@ if (clicked):
 
         away_score, home_score = simulator.simulate(a_team, h_team)
 
-        left, right = st.columns(2)
+        left, right = st.columns([2,3])
 
         with left:
             print_results(away_team, away_score, home_team, home_score)
