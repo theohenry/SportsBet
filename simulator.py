@@ -161,6 +161,8 @@ def simulate(away_team, home_team):
         # Game state - probability of an event given a previous event
             # end of game situations, time and score
 
+# Test if it performs better with homecourt
 # README
+# HOSTING
 # Script that calls the api every night to update the excel and json
 

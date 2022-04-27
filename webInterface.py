@@ -28,45 +28,90 @@ df = pd.DataFrame({
     })
 
 with left_column:
-    away_team = st.selectbox(
-        'Select the away team:',
-        df['team2'],
-        index = 0)
-
-with right_column:
     home_team = st.selectbox(
         'Select the home team:',
         df['team1'],
         index = 1)
 
+with right_column:
+    away_team = st.selectbox(
+        'Select the away team:',
+        df['team2'],
+        index = 0)
 
-a_team = nba_team_dict[away_team]
 h_team = nba_team_dict[home_team]
+a_team = nba_team_dict[away_team]
 # away_team, ' @ ', home_team
 
-away_url = "https://www.nba.com/.element/img/1.0/teamsites/logos/teamlogos_500x500/" + a_team.lower() + ".png"
 home_url = "https://www.nba.com/.element/img/1.0/teamsites/logos/teamlogos_500x500/" + h_team.lower() + ".png"
+away_url = "https://www.nba.com/.element/img/1.0/teamsites/logos/teamlogos_500x500/" + a_team.lower() + ".png"
 
 left, middle, right = st.columns(3)
 
 with left:
-    st.image(
-        away_url,
-        width=100,
-    )
-    away_team
-
-with middle:
-    st.subheader("@")
-
-with right:
+    # st.markdown("<img src=\"{}\" width=100 style=\"hortizontal-align:middle\">".format(away_url), unsafe_allow_html=True)
     st.image(
         home_url,
-        width=100,
+        width=150,
     )
     home_team
 
+with middle:
+    st.markdown("<h1 style='text-align: center;'>VS</h1>", unsafe_allow_html=True)
+    # st.header("@")
 
+with right:
+    # st.markdown("<img src=\"{}\" width=100 style=\"horizontal-align:middle\">".format(home_url), unsafe_allow_html=True)
+    st.image(
+        away_url,
+        width=150,
+    )
+    away_team
+
+def getOdds():
+    st.title("Vegas Odds:")
+    odds_response = requests.get(
+        f'https://api.the-odds-api.com/v4/sports/{SPORT}/odds',
+        params={
+            'api_key': API_KEY,
+            'regions': REGIONS,
+            'markets': MARKETS,
+            'oddsFormat': ODDS_FORMAT,
+            'dateFormat': DATE_FORMAT,
+        }
+    )
+    # left_col, middle_col, right_col = st.columns([3,1,3])
+    if odds_response.status_code != 200:
+        print(f'Failed to get odds: status_code {odds_response.status_code}, response body {odds_response.text}')
+
+    else:
+        odds_json = odds_response.json()
+        print('Number of events:', len(odds_json))
+        for i in range(len(odds_json)):
+            team1 = odds_json[i]['bookmakers'][0]['markets'][0]['outcomes'][0]['name']
+            team2 = odds_json[i]['bookmakers'][0]['markets'][0]['outcomes'][1]['name']
+            spread = odds_json[i]['bookmakers'][0]['markets'][0]['outcomes'][0]['point']
+            # with left_col:
+            #     if (spread < 0):
+            #         st.write(team1, "-", -1 * spread)
+            #     else:
+            #         st.write(team1, "+",spread)
+            # with middle_col:
+            #     st.write("vs")
+            # with right_col:
+            #     if (spread > 0):
+            #         st.write(team2,"-",spread)
+            #     else:
+            #         st.write(team2, "+", spread * -1)
+            if (spread < 0):
+                st.write(team1, "-", -1 * spread, "vs", team2, "+", spread * -1)
+            else:
+                st.write(team1, "+",spread,"vs",team2,"-",spread )
+
+            # st.write(team1, spread, team2,)
+        # Check the usage quota
+        print('Remaining requests', odds_response.headers['x-requests-remaining'])
+        print('Used requests', odds_response.headers['x-requests-used'])
 
 def print_results(away_team, away_score, home_team, home_score):
     winner = home_team if home_score >= away_score else away_team
@@ -84,7 +129,17 @@ def print_results(away_team, away_score, home_team, home_score):
     st.subheader("Over/Under")
     st.write("Over/Under", over_under)
 
-clicked = st.button("Get Odds")
+# col1, col2, col3 = st.columns(3)
+
+# with col1:
+#     pass
+# with col3:
+#     pass
+# with col2 :
+#     clicked = st.button("Run Simulation")
+
+
+clicked = st.button("Run Simulation")
 if (clicked):
     'Simulating a lot of games...'
     if (a_team == h_team):
@@ -103,33 +158,12 @@ if (clicked):
 
         away_score, home_score = simulator.simulate(a_team, h_team)
 
-        print_results(away_team, away_score, home_team, home_score)
+        left, right = st.columns(2)
 
-odds_response = requests.get(
-    f'https://api.the-odds-api.com/v4/sports/{SPORT}/odds',
-    params={
-        'api_key': API_KEY,
-        'regions': REGIONS,
-        'markets': MARKETS,
-        'oddsFormat': ODDS_FORMAT,
-        'dateFormat': DATE_FORMAT,
-    }
-)
+        with left:
+            print_results(away_team, away_score, home_team, home_score)
 
-if odds_response.status_code != 200:
-    print(f'Failed to get odds: status_code {odds_response.status_code}, response body {odds_response.text}')
+        with right:
+            getOdds()
 
-else:
-    odds_json = odds_response.json()
-    print('Number of events:', len(odds_json))
-    for i in range(len(odds_json)):
-        print(odds_json[i]['bookmakers'][0]['markets'][0]['outcomes'][0]['name'], odds_json[i]['bookmakers'][0]['markets'][0]['outcomes'][0]['point'],odds_json[i]['bookmakers'][0]['markets'][0]['outcomes'][1]['name'])
 
-    # Check the usage quota
-    print('Remaining requests', odds_response.headers['x-requests-remaining'])
-    print('Used requests', odds_response.headers['x-requests-used'])
-
-# st.text_input("Your name", key="name")
-
-# You can access the value at any point with:
-# st.session_state.name
