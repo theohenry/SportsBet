@@ -6,18 +6,11 @@ NBA SportsBet is a web app that calculates the betting odds for any NBA matchup.
 
 ## Table of contents
 
-- [Quick start](#quick-start)
-- [Status](#status)
+- [Runnning the app locally](#running-the-app-locally)
 - [What's included](#whats-included)
-- [Bugs and feature requests](#bugs-and-feature-requests)
-- [Documentation](#documentation)
-- [Contributing](#contributing)
-- [Community](#community)
-- [Versioning](#versioning)
+- [App usage](#app-usage)
 - [Creators](#creators)
-- [Thanks](#thanks)
-- [Copyright and license](#copyright-and-license)
-
+- [Disclaimer](#disclaimer)
 
 ## Running the app locally
 
