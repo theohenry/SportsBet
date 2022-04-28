@@ -14,12 +14,8 @@ ODDS_FORMAT = 'decimal'
 DATE_FORMAT = 'iso'
 
 st.title("Welcome to NBA Sport$ Betting")
-st.write("Enter two teams to run in our simulation. In order to bet using our "+
-"model, follow these rules. If our predicted spread is closer to 0 than the " +
-"actual spread for that team, then we predict the opposing team will cover the spread."+
-" For example, our model predicts 76ers -3. The actual Vegas odds spread is 76ers -6.5. "+
-"According to our model, we say the 76ers will NOT cover and instead their"+
-" opponent will cover the spread.")
+st.write("Enter two teams to simulate and predict betting odds. See " +
+"betting guidelines and suggestions at the bottom of this page.")
 
 nba_team_dict = {}
 with open('teamNames.json') as json_file:
@@ -151,4 +147,18 @@ if (clicked):
         with right:
             getOdds()
 
-
+st.text("")
+st.text("")
+st.text("")
+st.header("Betting Guidelines and Suggestions")
+st.write("In order to bet using " +
+ "our model, follow these rules. If our predicted spread is closer to 0 than "
+  + "Vegas' spread for a given team, then we predict the opposing team will " +
+  "cover the spread. Oppositely, if our spread is greater " +
+  "(absolute value) than Vegas' for a given team, that team will cover.")
+st.write("Example: Our model predicts the 76ers -7. Vegas odds predict the " +
+ "76ers -5.5. According to our model, we say the 76ers WILL COVER. If " +
+ "instead the 76ers are -3 and Vegas is -5.5, we say the opponent WILL COVER.")
+st.write("\n Disclaimer: Our model does not claim to perform better than " +
+"Vegas betting odds. We are in no way responsible for any losses resulting " +
+"from using this website.")

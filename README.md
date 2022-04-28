@@ -50,6 +50,7 @@ SportsBet/
 ├── defense_probabililty.json
 ├── offense_probabililty.json
 ├── teamNames.json
+├── update.sh
 ├── README.md
 ```
 
@@ -63,15 +64,15 @@ SportsBet/
 - `defense_probability.json` is used in our monte carlo simulation
 - `offense_probability.json` is used in our monte carlo simulation
 - `teamNames.json` contains mappings from team names to abbreviations
+- `update.sh` bash script to update json and excel files with new NBA data
 - `README.md` is this beautifully written file
 
 
 ## App Usage
 
-Enter two teams to run in our simulation. In order to bet using our "+ model," follow these rules. If our predicted spread is closer to 0 than Vegas' "+ spread" for that team, then we predict the opposing team will cover the spread. 
-- For example, if our model predicts the 76ers -3. The actual Vegas odds spread is 76ers -6.5. "+
-"According to our model, we say the 76ers will NOT cover and instead their"+
-" opponent will cover the spread.
+Enter two teams to run in our simulation. In order to bet using our model follow these rules. If our predicted spread is closer to 0 than Vegas' "+ spread" for that team, then we predict the opposing team will cover the spread. 
+
+- Example: Our model predicts the 76ers -7. Vegas odds predict the 76ers -5.5. According to our model, we say the 76ers WILL COVER. If instead the 76ers are -3 and Vegas is -5.5, we say the opponent WILL COVER.
 
 
 ## Creators
@@ -83,9 +84,15 @@ Enter two teams to run in our simulation. In order to bet using our "+ model," f
 
 **Kunal Valia**
 
-- <https://twitter.com/fat>
+- <https://github.com/kunalvalia>
 - <https://www.linkedin.com/in/kunal-valia/>
 
 **Gustavo Curioso**
 
 - <https://www.linkedin.com/in/gustavo-curioso/>
+
+## Disclaimer
+
+Our model does not claim to perform better than " +
+"Vegas betting odds. We are in no way responsible for any losses resulting " +
+"from using this website.
