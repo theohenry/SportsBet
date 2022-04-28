@@ -63,7 +63,7 @@ SportsBet/
 
 ## App Usage
 
-Enter two teams to run in our simulation. In order to bet using our model follow these rules. If our predicted spread is closer to 0 than Vegas' "+ spread" for that team, then we predict the opposing team will cover the spread. 
+Enter two teams to run in our simulation. In order to bet using our model follow these rules. If our predicted spread is closer to 0 than Vegas' spread for that team, then we predict the opposing team will cover the spread. 
 
 - Example: Our model predicts the 76ers -7. Vegas odds predict the 76ers -5.5. According to our model, we say the 76ers WILL COVER. If instead the 76ers are -3 and Vegas is -5.5, we say the opponent WILL COVER.
 
@@ -86,6 +86,4 @@ Enter two teams to run in our simulation. In order to bet using our model follow
 
 ## Disclaimer
 
-Our model does not claim to perform better than " +
-"Vegas betting odds. We are in no way responsible for any losses resulting " +
-"from using this website.
+Disclaimer: Our model does not claim to perform better than Vegas betting odds. We are in no way responsible for any losses resulting from using this website.
