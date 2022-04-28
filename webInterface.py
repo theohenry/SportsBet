@@ -33,7 +33,7 @@ with left_column:
     home_team = st.selectbox(
         'Select the home team:',
         df['team1'],
-        index = 0)
+        index = 18)
 
 with right_column:
     away_team = st.selectbox(
